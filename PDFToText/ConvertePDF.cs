@@ -19,8 +19,6 @@ namespace PDFToText
                 for (int i = 1; i <= leitor.NumberOfPages; i++)
                 {
                     var textoPaginaBruta = PdfTextExtractor.GetTextFromPage(leitor, i);
-
-                    //textoPaginaBruta = textoPaginaBruta.Remove(textoPaginaBruta.LastIndexOf("\n"));
                     
                     textoAgrupado.Append(textoPaginaBruta);
                 }

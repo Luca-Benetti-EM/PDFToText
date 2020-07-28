@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,7 +67,8 @@ namespace PDFToText
             foreach(var linha in linhas)
             {
                 var codigo = linha.Substring(0, 8);
-                sql += $"--#start\nDELETE FROM TBCURSODEFORMACAOSUPERIOR WHERE CURSOCHAVE = '{codigo}'\n--#end\n";
+                var descricao = linha.Substring(9, linha.Length - 9);
+                sql += $"--#start\nDELETE FROM TBCURSODEFORMACAOSUPERIOR WHERE CURSOCHAVE = '{codigo}' OR CURSODESCRICAO = '{descricao.ToUpper()}'\n--#end\n";
             }
 
             int id = 1456;
@@ -80,7 +82,15 @@ namespace PDFToText
                 id++;
             }
 
-            txtConvertido.Text = sql;
+            //CONVERTE PARA UTF8
+
+            var charsetPadrao = Encoding.Default;
+            var bytesPadrao = charsetPadrao.GetBytes(sql);
+            var utf8 = Encoding.UTF8;
+            var bytesUtf8 = Encoding.Convert(charsetPadrao, utf8, bytesPadrao);
+            sql = utf8.GetString(bytesUtf8);
+
+            System.IO.File.WriteAllText(@"CAMINHO\insercao.sql", sql, Encoding.UTF8);
         }
     }
 }
